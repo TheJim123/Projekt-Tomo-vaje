@@ -625,10 +625,29 @@ class Datum:
 #     Datum(1, 11, 2014)
 #
 def datum(leto, dan):
-    s = stevilo_dni(leto)
-    p = s - dan
-    for  i in dolzine_mesecev(leto)[::-1]:
-        if p - i < 0:
+    meseci = dolzine_mesecev(leto)
+    mesec = 1
+    for x in meseci:
+        if dan - x > 0:
+            dan -= x
+            mesec += 1
+        else:
+            break
+    return Datum(dan, mesec, leto)
+
+# Uradno:
+# def datum(leto, dan):
+#     dolzine = dolzine_mesecev(leto)
+#     mesec = 1
+#     while dan > dolzine[mesec - 1]:
+#         dan -= dolzine[mesec - 1]
+#         mesec += 1
+#     return Datum(dan, mesec, leto)
+#
+# While zanka je ocitno boljsa opcija, ne vem zakaj sem probal s for zanko,
+# ki je po funkcionalnosti identicna while zanki
+
+
             
 
 ## Polinomi
