@@ -343,31 +343,14 @@ def je_seznam_ciklov(sez):
 #
 def urejeni_cikli(cikli):
     urejeni = []
-    if cikli == [[5, 3, 7, 9, 13], [11, 12, 4, 6], [8, 2, 14], [15, 18]]:
-        return [[2, 14, 8], [3, 7, 9, 13, 5], [4, 6, 11, 12], [15, 18]]
-# Iz nekega razloga je pri zgornjem seznamu ciklov bil problem v razporeditvi
-# stevil za prvim mestom. Verjetno je za tem nek razlog, zato prilagam uradno
-# resitev
-    else:
-        for cikel in cikli:
-            if (cikel == [] or len(cikel)== 1):
-                pass
-            else:
-                m = [min(cikel)]
-                k = [ x  for x in cikel if x != min(m)]
-                novi_cikel = m + k
-                urejeni.append(novi_cikel)
-        return sorted(urejeni)
-# Uradno:
-# def urejeni_cikli(cikli):
-#     sez = []
-#     for cikel in cikli:
-#         if len(cikel) > 1:
-#             najmanjsi = cikel.index(min(cikel))
-#             sez.append(cikel[najmanjsi:] + cikel[:najmanjsi])
-#     sez.sort()
-#     return sez
-
+    for cikel in cikli:
+        if (cikel == [] or len(cikel)== 1):
+            pass
+        else:
+            m = cikel.index(min(cikel))
+            novi_cikel = cikel[m:] + cikel[:m]
+            urejeni.append(novi_cikel)
+    return sorted(urejeni)
 
     
 #
