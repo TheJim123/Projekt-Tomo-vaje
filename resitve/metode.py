@@ -365,6 +365,43 @@ def urejeni_cikli(cikli):
 #     >>> iz_ciklov([[7, 3], [4], [5, 2, 1]], 9)
 #     [5, 1, 7, 4, 2, 6, 3, 8, 9]
 #
+def zapolni(permutacija):
+    for x in permutacija:
+        if x == 0:
+            i = permutacija.index(x)
+            permutacija[i]= i+1
+    return permutacija
+
+
+def iz_ciklov(cikli, dolzina=1):
+    if dolzina < max(max(cikli)):
+        dolzina = max(max(cikli))
+    permutacija = dolzina *[0]
+    for cikel in cikli:
+        if len(cikel) == 1:
+            permutacija[max(cikel)-1]= max(cikel)
+        else:
+            i = len(cikel)-1
+            while i in range(0, len(cikel)):
+                if i > 0:
+                    permutacija[cikel[i-1]-1]= cikel[i]
+                    i-=1
+                elif i == 0:
+                    permutacija[cikel[len(cikel)-1]-1] = cikel[0]
+                    i -=1
+    return zapolni(permutacija)
+                
+# Bolj optimalno:
+# def iz_ciklov(cikli, dolzina=0):
+#     for cikel in cikli:
+#         dolzina = max(dolzina, max(cikel))
+#    perm = list(range(1, dolzina + 1))
+#    for cikel in cikli:
+#         for i in range(1, len(cikel)):
+#             perm[cikel[i - 1] - 1] = cikel[i]
+#         perm[cikel[-1] - 1] = cikel[0]
+#     return perm
+
 
 #
 # 5. naloga
