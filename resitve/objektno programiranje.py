@@ -607,6 +607,13 @@ class Datum:
 #     45
 #
     def teden_v_letu(self):
+        poslednja_nedelja = self.dan_v_letu() - self.dan_v_tednu()
+        if poslednja_nedelja % 7 != 0:
+            k = 1
+        else:
+            k = 0
+        pretekle_nedelje = poslednja_nedelja // 7 + k
+        return pretekle_nedelje + 1        
         
 #
 # 14. naloga
