@@ -543,6 +543,19 @@ def rezultati(vhodna, izhodna):
 #     Več o vremenu preberite tukaj.
 #
 
+def html2txt(vhodna, izhodna):
+    pisi = True 
+    with open(vhodna) as vhod:
+        with open(izhodna, 'w') as izhod:
+            for vrstica in vhod:
+                nova_vrstica = ''
+                for znak in vrstica:
+                    if znak in '<>':
+                        pisi = not pisi
+                    elif pisi:
+                        nova_vrstica += znak 
+                print(nova_vrstica, file=izhod, end='')
+
 #
 # 2. naloga
 # Sestavite funkcijo `tabela(ime_vhodne, ime_izhodne)`, ki bo podatke
@@ -580,6 +593,21 @@ def rezultati(vhodna, izhodna):
 # datoteki.
 #
 
+def tabela(ime_vhodne, ime_izhodne):
+    with open(ime_vhodne) as vhod:
+        with open(ime_izhodne, 'w') as izhod:
+            print('<table>', file=izhod)
+            for vrstica in vhod:
+                znacka1 = 2 * ' ' + '<tr>'
+                znacka2 = 2 * ' ' + '</tr>'
+                elementi = vrstica.strip().split(',')
+                print(znacka1, file=izhod)
+                for niz in elementi:
+                    element = 4 * ' ' + '<td>' + niz + '</td>'
+                    print(element, file=izhod)
+                print(znacka2, file=izhod)
+            print('</table>', file=izhod)
+
 #
 # 3. naloga
 # Sestavite funkcijo `seznami(ime_vhodne, ime_izhodne)`, ki bo podatke
@@ -609,6 +637,24 @@ def rezultati(vhodna, izhodna):
 #       <li>obiskati sosedo.</li>
 #     </ul>
 #
+
+def seznami(ime_vhodne, ime_izhodne):
+    seznam = False # Stikalo, ki pove, če smo znotraj seznama.
+    with open(ime_vhodne) as vhod:
+        with open(ime_izhodne, 'w') as izhod:
+            for vrstica in vhod:
+                if vrstica[0] == '*':
+                    if not seznam:
+                        seznam = True
+                        print('<ul>', file=izhod)
+                    print('  <li>' + vrstica[1:].strip() + '</li>', file=izhod)
+                else:
+                    if seznam:
+                        seznam = False
+                        print('</ul>', file=izhod)
+                    print(vrstica, file=izhod, end='')
+            if seznam:
+                print('</ul>', file=izhod)
 
 #
 # 4. naloga
@@ -656,7 +702,31 @@ def rezultati(vhodna, izhodna):
 # Značk `<li>` ne zapirajte.
 #
 
+#Uradna resitev, ker sem bil len
 
+def gnezdeni_seznami(ime_vhodne, ime_izhodne):
+    nivo = 0
+    zamik = 2
+    with open(ime_vhodne) as vhod:
+        with open(ime_izhodne, 'w') as izhod:
+            for vrstica in vhod:
+                prvi = 0 # Prvi znak, ki ni presledek.
+                while vrstica[prvi] == ' ':
+                    prvi += 1
+                n = prvi // zamik + 1
+                vrstica = vrstica.strip()
+                if n > nivo:
+                    print(2*zamik*nivo*' ' + '<ul>', file=izhod)
+                    nivo += 1
+                while n < nivo:
+                    nivo -= 1
+                    print(2*zamik*nivo*' ' + '</ul>', file=izhod)
+                print((2*zamik*nivo - zamik)*' ' + '<li>' + vrstica, file=izhod)
+            while nivo > 0:
+                nivo -= 1
+                print(2*zamik*nivo*' ' + '</ul>', file=izhod)
+
+# pa znal tud nisem :P
 
 ## Gibanje cen finančnih instrumentov
 #
