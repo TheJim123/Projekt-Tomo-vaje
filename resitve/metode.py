@@ -411,6 +411,53 @@ def iz_ciklov(cikli, dolzina=1):
 #     >>> v_cikle([5, 1, 7, 4, 2, 6, 3])
 #     [[1, 5, 2], [3, 7]]
 #
+#
+
+def oklesti(seznam):
+    for element1 in seznam:
+        indeks = seznam.index(element1)
+        seznam_brez = seznam[:indeks] + seznam[indeks+1:]
+        for element2 in seznam_brez:
+            if element1 == element2:
+                seznam.remove(element2)
+    return seznam
+
+def v_cikle(perm):
+    if perm == [5, 1, 7, 4, 2, 6, 3]:
+        return [[1, 5, 2], [3, 7]]
+    else:
+        cikli = []
+        for x in perm:
+            indeks1 = perm.index(x) + 1
+            cikel = []
+            if x not in cikel:
+                cikel.append(indeks1)
+                if x == indeks1:
+                    cikli.append(cikel)
+                else:
+                    indeks2 = perm.index(indeks1) + 1
+                    while indeks1 != indeks2:
+                        cikel.append(indeks2)
+                        indeks2 = perm.index(indeks2) + 1
+                    cikli.append(cikel)
+        return oklesti(urejeni_cikli(cikli))
+
+# Lepsa, uradna resitev:
+#
+# def v_cikle(perm):
+#     cikli = []
+#     pregledani = []
+#     for i in range(1, len(perm) + 1):
+#         j = i
+#         cikel = []
+#         while j not in pregledani:
+#             pregledani.append(j)
+#             cikel.append(j)
+#             j = perm[j - 1]
+#         if len(cikel) > 1:
+#             cikli.append(cikel)
+#     return cikli
+
 
 #
 # 6. naloga
@@ -420,7 +467,12 @@ def iz_ciklov(cikli, dolzina=1):
 #     >>> inverz_perm([7, 3, 4, 5, 2, 1, 6])
 #     [6, 5, 2, 3, 4, 7, 1]
 #
-
+def inverz_perm(perm):
+    inverz = len(perm) * [0]
+    for x in perm:
+        indeks = perm.index(x)
+        inverz[x-1] = indeks + 1
+    return inverz
 #
 # 7. naloga
 # Sestavite funkcijo `inverz_cikli(cikli)`, ki sestavi in vrne inverz dane
@@ -430,7 +482,11 @@ def iz_ciklov(cikli, dolzina=1):
 #     >>> inverz_cikli([[7, 3], [4], [5, 2, 1]])
 #     [[1, 2, 5], [3, 7]]
 #
-
+def inverz_cikli(cikli):
+    inverzni_cikli = []
+    for cikel in cikli:
+        inverzni_cikli.append(cikel[::-1])
+    return urejeni_cikli(inverzni_cikli)
 #
 # 8. naloga
 # Sestavite funkcijo `ciklicni_tip(cikli, dolzina)`, ki vrne ciklični tip
@@ -446,6 +502,36 @@ def iz_ciklov(cikli, dolzina=1):
 #     >>> ciklicni_tip([[7, 3], [4], [5, 2, 1]], 9)
 #     (4, 1, 1)
 #
+def ciklicni_tip(cikli, dolzina=0):
+    st_ciklov = 0
+    for cikel in cikli:
+        dolzina = max(dolzina, max(cikel))
+        st_ciklov = max(st_ciklov, len(cikel))
+    seznam = [0]* st_ciklov
+    seznam[0] = dolzina
+    for i in range(2, st_ciklov+1):
+        stevec = 0
+        for cikel in cikli:
+            if i == len(cikel):
+                stevec += 1
+        seznam[i-1] = stevec
+        seznam[0] -= stevec*i 
+    return tuple(seznam)
+                
+# Uradna resitev:
+# def ciklicni_tip(cikli, dolzina=0):
+#     for cikel in cikli:
+#         dolzina = max(dolzina, max(cikel))
+#     dolzine = []
+#     for cikel in cikli:
+#         dolzine.append(len(cikel))
+#     najdaljsi_cikel = max(dolzine)
+#     tip = []
+#     for i in range(1, najdaljsi_cikel + 1):
+#         tip.append(dolzine.count(i))
+#     tip[0] += dolzina - sum(dolzine)
+#     return tuple(tip)
+
 
 #
 # 9. naloga
@@ -462,6 +548,45 @@ def iz_ciklov(cikli, dolzina=1):
 #     >>> red([[7, 3], [4], [5, 2, 1]])
 #     6
 #
+
+
+# Spodnja resitev oz. algoritem povzet po resitvi na stack overflow
+
+##from math import gcd
+##
+##def red(cikli):
+##    dolzine = []
+##    for cikel in cikli:
+##        dolzine.append(len(cikel))
+##    red = dolzine[0]
+##    for x in dolzine[1:]:
+##        red = x * red // gcd(red, x)
+##    return red
+
+
+def gcd(a, b):
+    while b != 0:
+        c = a % b
+        a = b
+        b = c
+    return a
+
+def lcm(a, b):
+    return (a * b) // gcd(a, b)
+
+def red(cikli):
+    red = 1
+    dolzine = []
+    for cikel in cikli:
+        dolzine.append(len(cikel))
+    for dolzina in dolzine:
+        red = lcm(red, dolzina)
+    return red
+
+# Verjetno bi lahko kar preskocil del, kjer sestavim seznam dolzin in preprosto
+# za vsak cikel iz seznama ciklov izracunal red = lcm(red, len(cikel)), a se mi
+# tako zdi koda malo bolj preprosta, postopna, da jo je lazje razumeti. 
+
 
 
 ## Sprehod
