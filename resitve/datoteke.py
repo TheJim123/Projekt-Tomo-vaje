@@ -354,6 +354,22 @@ def najpogostejse_besede(vhodna, st_besed, izhodna):
 # nujno, da imenu sledi natanko 5 števil.
 #
 
+def nabor(niz):
+    seznam = []
+    razbiti_niz = niz.strip().split(',')
+    ime = razbiti_niz[0]
+    seznam.append(ime)
+    for i in razbiti_niz[1:]:
+        seznam.append(int(i))
+    return tuple(seznam)
+
+# Krajse:
+# def nabor(niz):
+#     s = niz.split(',')
+#     for i in range(1, len(s)):
+#         s[i] = int(s[i])
+#     return tuple(s)
+
 #
 # 2. naloga
 # Sestavite funkcijo `nalozi_csv(ime)`, ki kot parameter dobi ime datoteke,
@@ -372,6 +388,20 @@ def najpogostejse_besede(vhodna, st_besed, izhodna):
 #     >>> nalozi_csv('kolokviji.txt')
 #     [('Janez Novak', 1, 3, 3, 0, 2), ('Peter Klepec', 1, 0, 1, 2, 1, 3), ('Drago Dragić', 7)]
 #
+
+def nalozi_csv(ime):
+    seznam = []
+    with open(ime) as d:
+        for vrstica in d:
+            seznam.append(nabor(vrstica))
+        return seznam
+
+# def nalozi_csv(ime):
+#     rezultat = []
+#     with open(ime) as f:
+#         for vrstica in f:
+#             rezultat.append(nabor(vrstica.strip()))
+#         return rezultat
 
 #
 # 3. naloga
@@ -393,6 +423,30 @@ def najpogostejse_besede(vhodna, st_besed, izhodna):
 #     Peter Klepec,8
 #     Drago Dragić,7
 #
+
+def vsote(vhodna, izhodna):
+    with open(vhodna) as vhod:
+        with open(izhodna, 'w') as izhod:
+            for vrstica in vhod:
+                naborcek = nabor(vrstica)
+                ime = naborcek[0]
+                tocke = sum(naborcek[1:])
+                print(ime+','+str(tocke), file=izhod)
+
+# Alternativno:
+# def vsote(vhodna, izhodna):
+#     podatki = nalozi_csv(vhodna)
+#     with open(izhodna, 'w') as f:
+#         for student in podatki:
+#             ime = student[0]
+#             vsota_tock = sum(student[1:])
+#             print(ime + ',' + str(vsota_tock), file=f)
+# Se bolj alternativna rešitev (uporablja metodo format):
+# def vsote_2(vhodna, izhodna):
+#     podatki = nalozi_csv(vhodna)
+#     with open(izhodna, 'w') as f:
+#         for student in podatki:
+#             print('{0},{1}'.format(student[0], sum(student[1:])), file=f)
 
 #
 # 4. naloga
@@ -425,6 +479,42 @@ def najpogostejse_besede(vhodna, st_besed, izhodna):
 #     Janez Novak,1,3,3,2,0,9
 #     POVPRECEN STUDENT,0.67,2.00,2.00,2.00,1.33,8.00
 #
+
+def seznam_nizov(seznam):
+    nizi = []
+    for element in seznam:
+        nizi.append(str(element))
+    return nizi
+
+def rezultati(vhodna, izhodna):
+    podatki = nalozi_csv(vhodna)
+    seznam = []
+    for student in podatki:
+        ime, priimek = student[0].split(' ')
+        tocke = student[1:]
+        vsota = sum(tocke)
+        seznam.append((priimek, ime, tocke, vsota))
+        seznam.sort() # sortiramo po priimkih
+        o = len(seznam) # stevilo oseb
+        k = len(seznam[0][2]) # stevilo kolokvijev
+        skupaj_vsota = 0
+        vsote_tock = [0] * k
+        for priimek, ime, tocke, vsota in seznam:
+            skupaj_vsota += vsota
+            for i in range(k):
+                vsote_tock[i] += tocke[i]
+        skupno_povprecje = '{0:.2f}'.format(skupaj_vsota / o) #dobimo nize stevil z 2 decimalkama
+        povprecne_tocke = []
+        for t in vsote_tock:
+            povprecne_tocke.append('{0:.2f}'.format(t / o)) #poracuna povprecje za vsak kolokvij
+        with open(izhodna, 'w') as izhod:
+            for priimek, ime, tocke, vsota in seznam:
+                niz_tock = ','.join(seznam_nizov(tocke))
+                oseba = ime + ' ' + priimek
+                print(oseba + ',' + niz_tock + ',' + str(vsota), file=izhod)
+            print('POVPRECEN STUDENT,' + ','.join(povprecne_tocke) + ',' + skupno_povprecje, file=izhod) 
+
+
 
 
 
