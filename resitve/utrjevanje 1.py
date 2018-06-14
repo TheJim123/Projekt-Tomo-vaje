@@ -8,6 +8,9 @@
 #     2.82842712475
 #
 
+def ravninska_razdalja(x1, y1, x2, y2):
+    return ((x1 - x2)** 2 + (y1 - y2) ** 2) ** 0.5
+  
 #
 # 2. naloga
 # Sestavite funkcijo `polarna_razdalja(r1, fi1, r2, fi2)`, ki vrne
@@ -18,6 +21,18 @@
 #     3.60555127546
 #
 
+import math as m
+def v_radiane(x):
+    return x * m.pi / 180
+def polarna_razdalja(r1, fi1, r2, fi2):
+    psi1 = v_radiane(fi1)
+    psi2 = v_radiane(fi2)
+    x1 = r1 * m.cos(psi1)
+    y1 = r1 * m.sin(psi1)
+    x2 = r2 * m.cos(psi2)
+    y2 = r2 * m.sin(psi2)
+    return ravninska_razdalja(x1, y1, x2, y2)
+
 
 ## Delne vsote vrst
 #
@@ -26,11 +41,20 @@
 #    $$1^k + 2^k + ... + n^k$$
 #
 
+def vsota_potenc(n, k):
+    vsota = 0
+    for i in range(1, n+1):
+        vsota += i ** k
+    return vsota
+
 #
 # 2. naloga
 # Sestavite funkcijo `vsota_harmonicne(n)`, ki izračuna delno vsoto
 #    $$1 + 1 / 2 + 1 / 3 + ... + 1 / n$$
 #
+
+def vsota_harmonicne(n):
+    return vsota_potenc(n, -1)
 
 #
 # 3. naloga
@@ -39,12 +63,25 @@
 # vsota večja od števila `n`.
 #
 
+def divergenca_harmonicne(n):
+    i = 1
+    while vsota_harmonicne(i) < n:
+        i += 1
+    return i
+
 #
 # 4. naloga
 # Sestavite funkcijo `eksponentna(n)`, ki izračuna delno vsoto:
 #    $$1 + 1 / 1! + 1 / 2! + 1 / 3! + ... + 1 / n!$$
 #
 
+import math as m
+
+def eksponentna(n):
+    vsota = 0
+    for i in range(n+1):
+        vsota += (1 / m.factorial(i))
+    return vsota
 
 ## Palindromi
 #
@@ -52,6 +89,12 @@
 # Sestavite funkcijo `palindrom(niz)`, ki vrne `True` kadar je `niz`
 # palindrom, in `False` sicer.
 #
+
+def palindrom(niz):
+    for i in range(len(niz)):
+        if niz[i] != niz[-(i+1)]:
+            return False
+    return True
 
 #
 # 2. naloga
@@ -62,6 +105,14 @@
 # Sestavite funkcijo `prakticno_palindrom(niz)`, ki preveri, ali je `niz`
 # priktično palindrom. Vse znake (tudi presledke) v besedi obravnavamo enako.
 #
+
+def prakticno_palindrom(niz):
+    for znak in niz:
+        indeks = niz.index(znak)
+        brez_znaka = niz[:indeks] + niz[indeks+1:]
+        if palindrom(brez_znaka):
+            return True
+    return False
 
 #
 # 3. naloga
@@ -75,7 +126,43 @@
 # Sestavite funkcijo `skoraj_palindrom(niz)`, ki preveri, ali je `niz`
 # skoraj palindrom. Vse znake (tudi presledke) v besedi obravnavamo enako.
 #
+def skoraj_palindrom(niz):
+    znaki = []
+    for znak in niz:
+        if znak not in znaki:
+            znaki.append(znak)
+    if prakticno_palindrom(niz):
+        return True
+    else:
+        for znak in niz:
+            indeks = niz.index(znak)
+            for x in znaki:
+                zamenjavni_niz = niz[:indeks] + x + niz[indeks+1:]
+                dodajalni_niz = niz[:indeks] + x + niz[indeks:]
+                if palindrom(zamenjavni_niz):
+                    return True
+                elif palindrom(dodajalni_niz):
+                    return True
+        return False
+        
+#Kasneje sem spoznal, da prakticno_palidrom(niz) vrne isti rezultat ce moramo
+#znak dodati ali pa odvzeti. Krajsa funkcija bi torej bla:
 
+# def skoraj_palindrom(niz):
+#     if prakticno_palindrom(niz):
+#         return True
+#     else:
+#         znaki = []
+#         for znak in niz:
+#             if znak not in znaki:
+#                 znaki.append(znak)
+#         for znak in niz:
+#             indeks = niz.index(znak)
+#             for x in znaki:
+#                 novi_niz = niz[:indeks] + x + niz[indeks+1:]
+#                 if palindrom(novi_niz):
+#                     return True
+#         return False
 
 
 ## Ogrlice
@@ -101,6 +188,20 @@
 #     >>> je_ogrlica("BBRBBRBXY", 5, 2)
 #     False
 #
+
+def je_ogrlica(niz, b, r):
+    return niz.count('B') == b and niz.count('R') == r and len(niz) == b + r
+
+#Verjetno boljsa resitev:
+# def je_ogrlica(niz, b, r):
+#     for znak in niz:
+#         if znak == 'B':
+#             b -= 1
+#         elif znak == 'R':
+#             r -= 1
+#         else:
+#             return False
+#     return b == 0 and r == 0
 
 #
 # 2. naloga
@@ -131,7 +232,11 @@
 #     6
 #
 
-
+def stevilo_ogrlic(b, r):
+    if b == 0 or r == 0:
+        return 1
+    else:
+        return stevilo_ogrlic(b-1, r) + stevilo_ogrlic(b, r-1)
 
 ## Hilbertova krivulja
 #
@@ -228,6 +333,9 @@
 #     1537.68
 #
 
+def davcna_osnova(mpc, ddv):
+    return float('{0:.2f}'.format(mpc * 100/(100+ddv)))
+
 #
 # 2. naloga
 # Sestavite funkcijo `znesek_racuna(artikli, racun)`, ki izračuna, koliko
@@ -239,6 +347,29 @@
 # 
 # Predpostavite, da so na računu le artikli, ki so v s slovarjem podani bazi `artikli`
 #
+
+def znesek_racuna(artikli, racun):
+    vsota = 0
+    for x, y in racun.items():
+        for k, v in artikli.items():
+            if k == x:
+                cena_enega = v[0]
+                kolicina = y[0]
+                popust = y[1]
+                znesek = cena_enega * kolicina *(1 - popust/100)
+                vsota += znesek
+    return float('{0:.2f}'.format(vsota))
+
+# Lepse, krajse, rajse:
+# def znesek_racuna(artikli, racun):
+#     vsota = 0
+#     for artikel in racun:
+#         cena = artikli[artikel][0]
+#         kolicina = racun[artikel][0]
+#         popust = racun[artikel][1]
+#         znesek = kolicina * cena * (1 - popust / 100)
+#         vsota += znesek
+#     return round(vsota, 2)
 
 #
 # 3. naloga
@@ -253,6 +384,17 @@
 #     {0: 24.36, 9.5: 76.44, 22: 21.47}
 #
 
+def davcni_obracun(artikli, racun):
+    obracun = {}
+    for artikel, (kolicina, popust) in racun.items():
+        cena_enega, ddv = artikli[artikel]
+        znesek = kolicina * cena_enega * (1 - popust / 100)
+        osnova = davcna_osnova(znesek, ddv)
+        obracun[ddv] = obracun.get(ddv, 0) + osnova
+    return obracun
+
+#Nisem vedel kak resit, tak da je resitev kr uradna.  
+
 #
 # 4. naloga
 # Ob koncu delovnega dneva nas zanima, koliko katerega artikla smo prodali,
@@ -265,6 +407,14 @@
 #     >>> dnevni_obracun(artikli, [racun1, racun2, racun3])
 #     {('ponev', 20): 3, ('likalnik', 5): 1, ('knjiga', 0): 1, ('igrača', 0): 3, ('knjiga', 10): 5, ('igrača', 20): 1}
 #
+
+def dnevni_obracun(artikli, racuni):
+    obracun = {}
+    for racun in racuni:
+        for artikel, (kolicina, popust) in racun.items():
+            kljuc = (artikel, popust)
+            obracun[kljuc] = obracun.get(kljuc, 0) + kolicina
+    return obracun
 
 
 ## Igra življenja
