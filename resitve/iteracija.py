@@ -8,6 +8,12 @@
 #     [7, 3, 3, 1]
 #
 
+def stevke(n):
+    while n > 0:
+        c = n % 10
+        n //= 10
+        yield c
+
 #
 # 2. naloga
 # Sestavite generator `potence_naravnih(k)`, ki kot argument dobi število
@@ -18,6 +24,12 @@
 #     [1, 4, 9, 16, 25, 36, 49, 64, 81, 100]
 #
 
+def potence_naravnih(k):
+    i=1
+    while k:
+        yield i ** k
+        i += 1
+
 #
 # 3. naloga
 # Sestavite generator `fakultete(n)`, ki kot argument dobi nenegativno
@@ -27,6 +39,21 @@
 #     >>> [next(g) for i in range(10)]
 #     [1, 1, 2, 6, 24, 120, 720, 5040, 40320, 362880]
 #
+
+def fakulteta(n):
+    produkt = 1
+    if n == 0:
+        return produkt
+    else:
+        for i in range(1, n+1):
+            produkt *= i
+        return produkt
+
+def fakultete(n):
+    while True:
+        i = fakulteta(n)
+        yield i
+        n +=1
 
 #
 # 4. naloga
@@ -41,6 +68,15 @@
 #     [20, 10, 5, 16, 8, 4, 2, 1]
 #
 
+def collatz(n):
+    yield n
+    while n != 1:
+        if n % 2 == 0:
+            n //= 2
+        else:
+            n = 3 * n + 1
+        yield n
+
 #
 # 5. naloga
 # Sestavite generator `delitelji(n)`, ki kot argument dobi naravno število
@@ -49,6 +85,19 @@
 #     >>> [x for x in delitelji(12)]
 #     [1, 2, 3, 4, 6, 12]
 #
+
+def delitelji(n):
+    deliteljcki = []
+    i = 1
+    while i * i < n:
+        if n % i == 0:
+            yield i
+            deliteljcki.append( n // i)
+        i += 1
+    if i * i == n:
+        yield i
+    while len(deliteljcki) > 0:
+        yield deliteljcki.pop()
 
 #
 # 6. naloga
@@ -60,6 +109,9 @@
 # 
 #     ucinkoviti_delitelji = delitelji
 #
+
+def ucinkoviti_delitelji(n):
+    return delitelji(n)
 
 
 ## Bliskovito hitri telefonski imenik
