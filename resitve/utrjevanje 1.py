@@ -539,6 +539,23 @@ def dnevni_obracun(artikli, racuni):
 #     {'09-04-2017': (10.0, 53), '13-04-2017': (8.0, 39), '12-04-2017': (14.0, 76), '10-04-2017': (12.0, 61)}
 #
 
+def v_minutah(niz):
+    indeks = niz.index(':')
+    ure = int(niz[:indeks])
+    minute = int(niz[indeks+1:])
+    return ure + minute
+
+def preberi_podatke(datoteka):
+    with open(datoteka) as d:
+        slovar = {}
+        for vrstica in d:
+            razbita = vrstica.split(',')
+            datum = razbita[0]
+            dolzina = int(razbita[1])
+            cas = v_minutah(razbita[2])
+            slovar[datum] = (dolzina, cas)
+        return slovar
+
 #
 # 2. naloga
 # Sestavite funkcijo `povprecna_hitrost(dolzina, cas)`, ki ob dani pretečeni
@@ -547,6 +564,10 @@ def dnevni_obracun(artikli, racuni):
 #     >>> povprecna_hitrost(10.0, 53)
 #     0.19
 #
+
+def povprecna_hitrost(dolzina, cas):
+    hitrost = float(dolzina / cas)
+    return round(hitrost, 2)
 
 #
 # 3. naloga
@@ -590,4 +611,41 @@ def dnevni_obracun(artikli, racuni):
 #     \end{document}
 #
 
-
+def pretvori_v_latex(vhod, izhod):
+    nizi = []
+    for datum, (razdalja, cas) in preberi_podatke(vhod).items():
+            novi_datum = datum.replace('-', '. ')
+            hitrost = povprecna_hitrost(razdalja, cas)
+            niz = '{} & {} & {} & {} \\'.format(novi_datum, razdalja, cas, hitrost)
+            nizi.append(niz)
+    with open(izhod, 'w') as i:
+        print('\documentclass[a4paper, 12pt]{amsart}', file=i)
+        print(r'\usepackage[utf8]{inputenc}', file=i)
+        print(r'\usepackage[slovene]{babel}', file=i)
+        print(r'\usepackage{lmodern}', file=i)
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%', file=i)
+        print('\pagestyle{empty}', file=i)
+        print('\pagenumbering{gobble}', file=i)
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%', file=i)
+        print(r'\usepackage{booktabs}', file=i)
+        print(r'\usepackage{longtable}', file=i)
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%', file=i)
+        print('\title{Marko te\v{c}e, Marko te\v{c}e}', file=i)
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%', file=i)
+        print('\begin{document}', file=i)
+        print('\maketitle', file=i)
+        print(' ', file=i)
+        print(' ', file=i)
+        print('\begin{longtable}[c]{cccc}', file=i)
+        print('\toprule', file=i)
+        print('{\em Datum      } &', file=i)
+        print('{\em Razdalja   } &', file=i)
+        print('{\em Čas        } &', file=i)
+        print('{\em Hitrost    }', file=i)
+        print('\\ \midrule \endhead', file=i)
+        for n in nizi:
+            print(n, file = i)
+        print('\bottomrule', file=i)
+        print('\end{longtable}', file=i)
+        print('%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%', file=i)
+        print('\end{document}', file=i)
